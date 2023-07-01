@@ -1,54 +1,70 @@
-version: '3.8'
-
+version: '3.8' # Versão do docker compose
+networks:
+  db:
+    # Nome da rede
+    driver: bridge # Driver da rede
 services:
+  db:
+    # Nome do serviço
+    container_name: db # Nome do container
+    hostname: db # Nome de host do container
+    image: mysql:8.0 # Imagem do container
+    restart: always
+    ports:
+      # Configuração de portas
+      - 3306:3306
+    volumes:
+      # Definição do volume
+      - './.db:/var/lib/mysql'
+    environment:
+      # Definição das variáveis de ambiente
+      - MYSQL_DATABASE=app
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      # Configuração de rede do container
+      - db
   app:
-    container_name: app
-    hostname: app
+    # Nome do serviço
+    container_name: app # Nome do container
+    hostname: app # Nome de host do container
     build:
+      # Configuração da contrução do container
       context: .
     ports:
+      # Configuração de portas
       - 8080:8080
     volumes:
+      # Definição do volume
       - '.:/app'
     environment:
+      # Definição das variáveis de ambiente
       - DB_HOST=db
       - DB_PORT=3306
       - DB_NAME=app
       - DB_USER=root
       - DB_PASS=root
     depends_on:
+      # Adicionando dependência ao container
       - db
     networks:
+      # Configuração de rede do container
       - db
   adminer:
-    container_name: adminer
-    hostname: adminer
-    image: adminer:4
+    # Nome do serviço
+    container_name: adminer # Nome do container
+    hostname: adminer # Nome de host do container
+    image: adminer:4 # Imagem do container
     restart: always
     ports:
+      # Configuração de portas
       - 3307:8080
     environment:
+      # Definição das variáveis de ambiente
       - ADMINER_DEFAULT=mysql
       - ADMINER_DESIGN=dracula
     depends_on:
+      # Adicionando dependência ao container
       - db
     networks:
+      # Configuração de rede do container
       - db
-  db:
-    container_name: db
-    hostname: db
-    image: mysql:8.0
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
-    restart: always
-    ports:
-      - 8889:3306
-    volumes:
-      - './.db:/var/lib/mysql'
-    environment:
-      - MYSQL_DATABASE=app
-      - MYSQL_ROOT_PASSWORD=root
-    networks:
-      - db
-networks:
-  db:
-    driver: bridge
