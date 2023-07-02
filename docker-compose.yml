@@ -1,18 +1,12 @@
 version: '3.8' # Versão do docker compose
+name: example # Nome da nossa stack
 networks:
   db:
-    # Nome da rede
     driver: bridge # Driver da rede
 services:
   db:
-    # Nome do serviço
-    container_name: db # Nome do container
-    hostname: db # Nome de host do container
     image: mysql:8.0 # Imagem do container
     restart: always
-    ports:
-      # Configuração de portas
-      - 3306:3306
     volumes:
       # Definição do volume
       - './.db:/var/lib/mysql'
@@ -24,12 +18,9 @@ services:
       # Configuração de rede do container
       - db
   app:
-    # Nome do serviço
-    container_name: app # Nome do container
-    hostname: app # Nome de host do container
-    build:
-      # Configuração da contrução do container
-      context: .
+    image: amazoncorretto:17-alpine-jdk # Imagem do container
+    working_dir: /app # Definindo o diretório de trabalho
+    command: ./mvnw spring-boot:run # Comando de inicialização do container
     ports:
       # Configuração de portas
       - 8080:8080
@@ -50,9 +41,6 @@ services:
       # Configuração de rede do container
       - db
   adminer:
-    # Nome do serviço
-    container_name: adminer # Nome do container
-    hostname: adminer # Nome de host do container
     image: adminer:4 # Imagem do container
     restart: always
     ports:
